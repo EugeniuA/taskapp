@@ -26,7 +26,7 @@
   <p id="hostname"></p>
 
   <script>
-    const API = `http://${window.location.hostname}:30001/api/tasks`;
+    const API = `https://taskapp-backend-965723188774.europe-west1.run.app/api/tasks`;
 
     async function loadTasks() {
       const res = await fetch(API);
@@ -57,7 +57,7 @@
       loadTasks();
     }
 
-    fetch(`http://${window.location.hostname}:30001/health`)
+    fetch(`https://taskapp-backend-965723188774.europe-west1.run.app/health`)
       .then(r => r.json())
       .then(d => document.getElementById('hostname').textContent = `Backend pod: ${d.hostname}`);
 
