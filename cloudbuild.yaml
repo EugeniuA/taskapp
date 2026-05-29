@@ -2,48 +2,32 @@ options:
   logging: CLOUD_LOGGING_ONLY
 
 steps:
-  # Build backend
   - name: 'gcr.io/cloud-builders/docker'
-    args: ['build', '-t', 'europe-west1-docker.pkg.dev/$PROJECT_ID/taskapp/backend:$COMMIT_SHA', './backend']
+    args: ['build', '-t', 'europe-west1-docker.pkg.dev/$PROJECT_ID/taskapp/backend:latest', './backend']
 
-  # Build frontend
   - name: 'gcr.io/cloud-builders/docker'
-    args: ['build', '-t', 'europe-west1-docker.pkg.dev/$PROJECT_ID/taskapp/frontend:$COMMIT_SHA', './frontend']
+    args: ['build', '-t', 'europe-west1-docker.pkg.dev/$PROJECT_ID/taskapp/frontend:latest', './frontend']
 
-  # Push backend
   - name: 'gcr.io/cloud-builders/docker'
-    args: ['push', 'europe-west1-docker.pkg.dev/$PROJECT_ID/taskapp/backend:$COMMIT_SHA']
+    args: ['push', 'europe-west1-docker.pkg.dev/$PROJECT_ID/taskapp/backend:latest']
 
-  # Push frontend
   - name: 'gcr.io/cloud-builders/docker'
-    args: ['push', 'europe-west1-docker.pkg.dev/$PROJECT_ID/taskapp/frontend:$COMMIT_SHA']
+    args: ['push', 'europe-west1-docker.pkg.dev/$PROJECT_ID/taskapp/frontend:latest']
 
-  # Deploy backend pe Cloud Run
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
     entrypoint: gcloud
-    args:
-      - 'run'
-      - 'deploy'
-      - 'taskapp-backend'
-      - '--image=europe-west1-docker.pkg.dev/$PROJECT_ID/taskapp/backend:$COMMIT_SHA'
-      - '--region=europe-west1'
-      - '--platform=managed'
-      - '--allow-unauthenticated'
-      - '--port=3000'
+    args: ['run', 'deploy', 'taskapp-backend',
+           '--image=europe-west1-docker.pkg.dev/$PROJECT_ID/taskapp/backend:latest',
+           '--region=europe-west1', '--platform=managed',
+           '--allow-unauthenticated', '--port=3000']
 
-  # Deploy frontend pe Cloud Run
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
     entrypoint: gcloud
-    args:
-      - 'run'
-      - 'deploy'
-      - 'taskapp-frontend'
-      - '--image=europe-west1-docker.pkg.dev/$PROJECT_ID/taskapp/frontend:$COMMIT_SHA'
-      - '--region=europe-west1'
-      - '--platform=managed'
-      - '--allow-unauthenticated'
-      - '--port=80'
+    args: ['run', 'deploy', 'taskapp-frontend',
+           '--image=europe-west1-docker.pkg.dev/$PROJECT_ID/taskapp/frontend:latest',
+           '--region=europe-west1', '--platform=managed',
+           '--allow-unauthenticated', '--port=80']
 
 images:
-  - 'europe-west1-docker.pkg.dev/$PROJECT_ID/taskapp/backend:$COMMIT_SHA'
-  - 'europe-west1-docker.pkg.dev/$PROJECT_ID/taskapp/frontend:$COMMIT_SHA'
+  - 'europe-west1-docker.pkg.dev/$PROJECT_ID/taskapp/backend:latest'
+  - 'europe-west1-docker.pkg.dev/$PROJECT_ID/taskapp/frontend:latest'
